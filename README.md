@@ -38,3 +38,7 @@ python train.py --data_dir ./data/Yahoo  --window 48  --condition_emb_dim 64  --
 ```
 /bin/bash run_all.sh
 ```
+
+
+# My command for mac
+python train.py --data_dir ./data/Yahoo  --window 48  --condition_emb_dim 64  --condition_mode 2  --save_file ./result  --gpu -1 --kernel_size 24 --stride 8 --dropout_rate 0.05

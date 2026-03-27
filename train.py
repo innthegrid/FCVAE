@@ -9,6 +9,11 @@ from model import MyVAE
 from pytorch_lightning.loggers import TensorBoardLogger
 import argparse
 
+os.makedirs("./ckpt", exist_ok=True)
+os.makedirs("./npy", exist_ok=True)
+os.makedirs("./csv", exist_ok=True)
+os.makedirs("./result", exist_ok=True)
+
 SEED = 8
 torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
@@ -30,15 +35,27 @@ def main(hparams):
         monitor="val_loss_valid_epoch",
         mode="min",
     )
-    trainer = Trainer(
-        max_epochs=hparams.max_epoch,
-        callbacks=[early_stop, checkpoint],
-        logger=logger,
-        accelerator="gpu",
-        gpus=[hparams.gpu],
-        check_val_every_n_epoch=1,
-        gradient_clip_algorithm="value",
-        gradient_clip_val=2,
+    # CHANGE: adapted for Mac
+    if hparams.gpu < 0:
+        trainer = Trainer(
+            max_epochs=hparams.max_epoch,
+            callbacks=[early_stop, checkpoint],
+            logger=logger,
+            accelerator="cpu",
+            check_val_every_n_epoch=1,
+            gradient_clip_algorithm="value",
+            gradient_clip_val=2,
+    )
+    else:
+        trainer = Trainer(
+            max_epochs=hparams.max_epoch,
+            callbacks=[early_stop, checkpoint],
+            logger=logger,
+            accelerator="gpu",
+            devices=[hparams.gpu],
+            check_val_every_n_epoch=1,
+            gradient_clip_algorithm="value",
+            gradient_clip_val=2,
     )
     print("fit start")
     train_loader = model.mydataloader("train")

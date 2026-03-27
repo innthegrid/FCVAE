@@ -163,7 +163,9 @@ class CVAE(nn.Module):
                 torch.from_numpy(np.percentile(recon.cpu(), self.hp.mcmc_rate, axis=-1))
                 .unsqueeze(2)
                 .repeat(1, 1, self.hp.window)
-            ).to("cuda")
+            # CHANGE: adapted for Mac
+            # ).to("cuda")
+            ).to(x.device)
             if self.hp.mcmc_mode == 0:
                 l = (temp < recon).int()
                 x = mu_x * (1 - l) + origin_x * l
